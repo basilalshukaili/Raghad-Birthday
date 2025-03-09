@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save Location to Firebase</title>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+    <title>Save Location to Cloud</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,57 +29,65 @@
 <body>
 
     <h1>Save Your Location</h1>
-    <button onclick="saveToFirebase()">Save My Location</button>
+    <button onclick="saveToCloud()">Save My Location</button>
     <div class="status" id="statusMessage"></div>
 
     <script>
-        const firebaseConfig = {
-  apiKey: "AIzaSyC4ZKfXeoV_yJTcmFJ18YzgIot2mh6HUXk",
-  authDomain: "gift-9a9f7.firebaseapp.com",
-  databaseURL: "https://gift-9a9f7-default-rtdb.firebaseio.com",
-  projectId: "gift-9a9f7",
-  storageBucket: "gift-9a9f7.firebasestorage.app",
-  messagingSenderId: "931944784561",
-  appId: "1:931944784561:web:94f6456698f368098cb890",
-  measurementId: "G-PF6M0HWKYV"
-};
+        const JSONBIN_URL = "https://api.jsonbin.io/v3/b/67ce13c8e41b4d34e4a39826";
+const JSONBIN_API_KEY = "$2a$10$5BhcLjw.9GGSEI6IQhXam.WDnJ/E2E1/apvz6RIeRpJQlAkGqU0OK";
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+function updateStatus(message, color = 'blue') {
+    const statusElement = document.getElementById('statusMessage');
+    statusElement.textContent = message;
+    statusElement.style.color = color;
+}
 
-        function updateStatus(message, color = 'blue') {
-            const statusElement = document.getElementById('statusMessage');
-            statusElement.textContent = message;
-            statusElement.style.color = color;
-        }
+function saveToCloud() {
+    updateStatus("Getting your location...");
 
-        function saveToFirebase() {
-            updateStatus("Getting your location...");
+    if (!navigator.geolocation) {
+        updateStatus("Geolocation not supported", "red");
+        return;
+    }
 
-            if (!navigator.geolocation) {
-                updateStatus("Geolocation not supported", "red");
-                return;
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            const lat = position.coords.latitude.toFixed(6);
+            const lon = position.coords.longitude.toFixed(6);
+            const timestamp = new Date().toISOString();
+
+            try {
+                // Fetch existing data
+                const response = await fetch(JSONBIN_URL, {
+                    headers: { "X-Master-Key": $2a$10$5BhcLjw.9GGSEI6IQhXam.WDnJ/E2E1/apvz6RIeRpJQlAkGqU0OK }
+                });
+                const data = await response.json();
+                const locations = data.record.locations || [];
+
+                // Append new location
+                locations.push({ latitude: lat, longitude: lon, timestamp });
+
+                // Update JSONBin
+                await fetch(JSONBIN_URL, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Master-Key": $2a$10$5BhcLjw.9GGSEI6IQhXam.WDnJ/E2E1/apvz6RIeRpJQlAkGqU0OK
+                    },
+                    body: JSON.stringify({ locations })
+                });
+
+                updateStatus("Location saved successfully!", "green");
+            } catch (error) {
+                updateStatus("Error saving location", "red");
+                console.error(error);
             }
+        },
+        () => updateStatus("Location access denied", "red"),
+        { enableHighAccuracy: true, timeout: 5000 }
+    );
+}
 
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude.toFixed(6);
-                    const lon = position.coords.longitude.toFixed(6);
-                    const timestamp = new Date().toISOString();
-
-                    db.ref('locations').push({
-                        latitude: lat,
-                        longitude: lon,
-                        timestamp: timestamp
-                    });
-
-                    updateStatus("Location saved to Firebase!", "green");
-                },
-                () => updateStatus("Location access denied", "red"),
-                { enableHighAccuracy: true, timeout: 5000 }
-            );
-        }
     </script>
-
 </body>
 </html>
