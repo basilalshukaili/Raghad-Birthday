@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save My Location</title>
+    <title>Save Location to Firebase</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,7 +16,7 @@
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
-            background-color: #28a745;
+            background-color: #007bff;
             color: white;
             border: none;
             border-radius: 5px;
@@ -28,25 +30,32 @@
 </head>
 <body>
 
-    <h1>Click to Share Your Location</h1>
-    <button onclick="saveLocation()">Save My Location</button>
+    <h1>Save Your Location</h1>
+    <button onclick="saveToFirebase()">Save My Location</button>
     <div class="status" id="statusMessage"></div>
 
-    <!-- Hidden Google Forms Submission -->
-    <form id="googleForm" action="https://docs.google.com/forms/d/e/1FAIpQLSdd-5vv11ZJ3nV87vVhB1Zj9jHkrFXMBy1z38xc2QX-QLyz3w/formResponse" method="POST" target="hidden_iframe">
-        <input type="hidden" name="entry.1234567890" id="latInput">
-        <input type="hidden" name="entry.0987654321" id="lonInput">
-    </form>
-    <iframe name="hidden_iframe" style="display:none;"></iframe>
-
     <script>
+        const firebaseConfig = {
+  apiKey: "AIzaSyC4ZKfXeoV_yJTcmFJ18YzgIot2mh6HUXk",
+  authDomain: "gift-9a9f7.firebaseapp.com",
+  databaseURL: "https://gift-9a9f7-default-rtdb.firebaseio.com",
+  projectId: "gift-9a9f7",
+  storageBucket: "gift-9a9f7.firebasestorage.app",
+  messagingSenderId: "931944784561",
+  appId: "1:931944784561:web:94f6456698f368098cb890",
+  measurementId: "G-PF6M0HWKYV"
+};
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         function updateStatus(message, color = 'blue') {
             const statusElement = document.getElementById('statusMessage');
             statusElement.textContent = message;
             statusElement.style.color = color;
         }
 
-        function saveLocation() {
+        function saveToFirebase() {
             updateStatus("Getting your location...");
 
             if (!navigator.geolocation) {
@@ -58,13 +67,15 @@
                 (position) => {
                     const lat = position.coords.latitude.toFixed(6);
                     const lon = position.coords.longitude.toFixed(6);
+                    const timestamp = new Date().toISOString();
 
-                    // Save to Google Forms
-                    document.getElementById('latInput').value = lat;
-                    document.getElementById('lonInput').value = lon;
-                    document.getElementById('googleForm').submit();
+                    db.ref('locations').push({
+                        latitude: lat,
+                        longitude: lon,
+                        timestamp: timestamp
+                    });
 
-                    updateStatus("Location saved successfully!", "green");
+                    updateStatus("Location saved to Firebase!", "green");
                 },
                 () => updateStatus("Location access denied", "red"),
                 { enableHighAccuracy: true, timeout: 5000 }
