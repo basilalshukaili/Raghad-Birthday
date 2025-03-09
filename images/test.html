@@ -59,7 +59,7 @@ function saveToCloud() {
             try {
                 // Fetch existing data
                 const response = await fetch(JSONBIN_URL, {
-                    headers: { "X-Master-Key": $2a$10$5BhcLjw.9GGSEI6IQhXam.WDnJ/E2E1/apvz6RIeRpJQlAkGqU0OK }
+                    headers: { "X-Master-Key": $2a$10$fMLcu.oNegvM.qFIGxyI5.7cTQJueJ06As43dWTvQ.QZ84deVbY3m }
                 });
                 const data = await response.json();
                 const locations = data.record.locations || [];
@@ -72,7 +72,7 @@ function saveToCloud() {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
-                        "X-Master-Key": $2a$10$5BhcLjw.9GGSEI6IQhXam.WDnJ/E2E1/apvz6RIeRpJQlAkGqU0OK
+                        "X-Master-Key": $2a$10$fMLcu.oNegvM.qFIGxyI5.7cTQJueJ06As43dWTvQ.QZ84deVbY3m
                     },
                     body: JSON.stringify({ locations })
                 });
