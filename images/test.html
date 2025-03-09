@@ -1,60 +1,63 @@
 <body>
-    <h1>Gift 2</h1>
+    <h1>Gift 3</h1>
     <button onclick="saveToCloud()">Save My Location</button>
     <div class="status" id="statusMessage"></div>
 
     <!-- Script goes here -->
     <script>
-        const JSONBIN_URL = "https://api.jsonbin.io/v3/b/67ce13c8e41b4d34e4a39826";
-        const JSONBIN_API_KEY = "$2a$10$5BhcLjw.9GGSEI6IQhXam.WDnJ/E2E1/apvz6RIeRpJQlAkGqU0OK";
+    const JSONBIN_URL = "https://api.jsonbin.io/v3/b/67ce13c8e41b4d34e4a39826";
+    const JSONBIN_API_KEY = "$2a$10$5BhcLjw.9GGSEI6IQhXam.WDnJ/E2E1/apvz6RIeRpJQlAkGqU0OK";
 
-        function updateStatus(message, color = 'blue') {
-            const statusElement = document.getElementById('statusMessage');
-            statusElement.textContent = message;
-            statusElement.style.color = color;
+    function updateStatus(message, color = 'blue') {
+        const statusElement = document.getElementById('statusMessage');
+        statusElement.textContent = message;
+        statusElement.style.color = color;
+    }
+
+    function saveToCloud() {
+        updateStatus("Getting your location...");
+
+        if (!navigator.geolocation) {
+            updateStatus("Geolocation not supported", "red");
+            return;
         }
 
-        function saveToCloud() {
-            updateStatus("Getting your location...");
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const lat = position.coords.latitude.toFixed(6);
+                const lon = position.coords.longitude.toFixed(6);
+                const timestamp = new Date().toISOString();
 
-            if (!navigator.geolocation) {
-                updateStatus("Geolocation not supported", "red");
-                return;
-            }
+                try {
+                    const response = await fetch(JSONBIN_URL, {
+                        headers: { "X-Master-Key": JSONBIN_API_KEY }
+                    });
+                    const data = await response.json();
 
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    const lat = position.coords.latitude.toFixed(6);
-                    const lon = position.coords.longitude.toFixed(6);
-                    const timestamp = new Date().toISOString();
+                    // Safely check for locations
+                    const locations = data.record?.locations || [];
 
-                    try {
-                        const response = await fetch(JSONBIN_URL, {
-                            headers: { "X-Master-Key": JSONBIN_API_KEY }
-                        });
-                        const data = await response.json();
-                        const locations = data.record.locations || [];
+                    locations.push({ latitude: lat, longitude: lon, timestamp });
 
-                        locations.push({ latitude: lat, longitude: lon, timestamp });
+                    await fetch(JSONBIN_URL, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-Master-Key": JSONBIN_API_KEY
+                        },
+                        body: JSON.stringify({ locations })
+                    });
 
-                        await fetch(JSONBIN_URL, {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-Master-Key": JSONBIN_API_KEY
-                            },
-                            body: JSON.stringify({ locations })
-                        });
+                    updateStatus("Location saved successfully!", "green");
+                } catch (error) {
+                    updateStatus("Error saving location", "red");
+                    console.error(error);
+                }
+            },
+            () => updateStatus("Location access denied", "red"),
+            { enableHighAccuracy: true, timeout: 5000 }
+        );
+    }
+</script>
 
-                        updateStatus("Location saved successfully!", "green");
-                    } catch (error) {
-                        updateStatus("Error saving location", "red");
-                        console.error(error);
-                    }
-                },
-                () => updateStatus("Location access denied", "red"),
-                { enableHighAccuracy: true, timeout: 5000 }
-            );
-        }
-    </script>
 </body>
