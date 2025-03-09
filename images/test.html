@@ -1,12 +1,12 @@
 <body>
-    <h1>Thank You gift</h1>
+    <h1>Thank You gift 2</h1>
     <button onclick="saveToCloud()">Save My Location</button>
     <div class="status" id="statusMessage"></div>
 
     <!-- Script goes here -->
     <script>
-    const JSONBIN_URL = "https://api.jsonbin.io/v3/b/67ce1948e41b4d34e4a39a2e";
-    const JSONBIN_API_KEY = "$2a$10$5BhcLjw.9GGSEI6IQhXam.WDnJ/E2E1/apvz6RIeRpJQlAkGqU0OK";
+    const JSONBIN_URL = "https://api.jsonbin.io/v3/b/67ce1948e41b4d34e4a39a2e"; // New bin ID
+    const JSONBIN_API_KEY = "$2a$10$5BhcLjw.9GGSEI6IQhXam.WDnJ/E2E1/apvz6RIeRpJQlAkGqU0OK"; // Correct API key
 
     function updateStatus(message, color = 'blue') {
         const statusElement = document.getElementById('statusMessage');
@@ -29,26 +29,37 @@
                 const timestamp = new Date().toISOString();
 
                 try {
+                    // Fetch the current data from JSONBin
                     const response = await fetch(JSONBIN_URL, {
                         headers: { "X-Master-Key": JSONBIN_API_KEY }
                     });
+
                     const data = await response.json();
 
-                    // Safely check for locations
+                    // Safely check for 'locations' array or create one if it doesn't exist
                     const locations = data.record?.locations || [];
 
+                    // Add the new location
                     locations.push({ latitude: lat, longitude: lon, timestamp });
 
-                    await fetch(JSONBIN_URL, {
+                    // Update the bin with the new data
+                    const updateResponse = await fetch(JSONBIN_URL, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",
                             "X-Master-Key": JSONBIN_API_KEY
                         },
-                        body: JSON.stringify({ locations })
+                        body: JSON.stringify({
+                            record: { locations } // Wrap it inside 'record' object
+                        })
                     });
 
-                    updateStatus("Location saved successfully!", "green");
+                    if (updateResponse.ok) {
+                        updateStatus("Location saved successfully!", "green");
+                    } else {
+                        updateStatus("Failed to save location", "red");
+                    }
+
                 } catch (error) {
                     updateStatus("Error saving location", "red");
                     console.error(error);
@@ -58,6 +69,6 @@
             { enableHighAccuracy: true, timeout: 5000 }
         );
     }
-</script>
+    </script>
 
 </body>
