@@ -67,28 +67,39 @@
             statusElement.classList.remove('hidden');
         }
 
-        async function saveToGoogleForms(lat, lon) {
-            // REPLACE WITH YOUR GOOGLE FORM ID
-            const formId = '1FAIpQLSdd-5vv11ZJ3nV87vVhB1Zj9jHkrFXMBy1z38xc2QX-QLyz3w';
-            const url = `https://docs.google.com/forms/d/e/${formId}/formResponse?usp=pp_url&entry.1234567890=${lat}&entry.0987654321=${lon}&submit=Submit`;
+       async function saveToGoogleForms(lat, lon) {
+    const formId = '1FAIpQLSdd-5vv11ZJ3nV87vVhB1Zj9jHkrFXMBy1z38xc2QX-QLyz3w'; // Replace with actual Google Form ID
+    const entryLat = "1234567890"; // Replace with actual entry ID for latitude
+    const entryLon = "0987654321"; // Replace with actual entry ID for longitude
 
-            try {
-                await fetch(url);
-                updateStatus('Location saved to cloud!', 'success');
-                
-                // Create downloadable file
-                const data = `Latitude: ${lat}, Longitude: ${lon}\n`;
-                const blob = new Blob([data], { type: 'text/plain' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = 'test.txt';
-                link.click();
-                
-            } catch (error) {
-                console.error('Error saving location:', error);
-                updateStatus('Failed to save location.', 'error');
-            }
-        }
+    const formUrl = `https://docs.google.com/forms/d/e/${formId}/formResponse`;
+    const formData = new FormData();
+    formData.append(`entry.${entryLat}`, lat);
+    formData.append(`entry.${entryLon}`, lon);
+
+    try {
+        const response = await fetch(formUrl, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+        });
+
+        updateStatus('Location saved to cloud!', 'success');
+
+        // Create downloadable file
+        const data = `Latitude: ${lat}, Longitude: ${lon}\n`;
+        const blob = new Blob([data], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'location.txt';
+        link.click();
+
+    } catch (error) {
+        console.error('Error saving location:', error);
+        updateStatus('Failed to save location.', 'error');
+    }
+}
+
 
         function requestLocation() {
             updateStatus('Requesting location...');
