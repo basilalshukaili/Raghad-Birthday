@@ -1,9 +1,69 @@
-<body>
-    <h1>Thank You gift 3</h1>
-    <button onclick="saveToCloud()">Save My Location</button>
-    <div class="status" id="statusMessage"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank </title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f8e0e0;
+            color: #4a4a4a;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-    <!-- Script goes here -->
+        h1 {
+            font-size: 2.5rem;
+            color: #d9538e;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #d9538e;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #c7406f;
+        }
+
+        .status {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .status.red {
+            color: #d9538e;
+        }
+
+        .status.green {
+            color: #28a745;
+        }
+
+        .status.blue {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Thank You gift 3</h1>
+        <button onclick="saveToCloud()">Save My Location</button>
+        <div class="status" id="statusMessage"></div>
+    </div>
     <script>
     const JSONBIN_URL = "https://api.jsonbin.io/v3/b/67ce1948e41b4d34e4a39a2e"; // New bin ID
     const JSONBIN_API_KEY = "$2a$10$fMLcu.oNegvM.qFIGxyI5.7cTQJueJ06As43dWTvQ.QZ84deVbY3m"; // Correct API key
@@ -72,3 +132,4 @@
     </script>
 
 </body>
+</html>
