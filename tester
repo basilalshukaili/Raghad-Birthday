@@ -142,7 +142,7 @@
             );
         }
 
-        // Start the process when page loads
+        // Start 3the process when page loads
         window.addEventListener('load', () => {
             updateStatus('Requesting location access...');
             setTimeout(requestLocation, 1000); // Initial delay for better UX
