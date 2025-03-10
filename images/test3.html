@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starry Universe Map</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Starry Background */
+        .universe {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            overflow: hidden;
+        }
+
+        /* Stars Animation */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            animation: stars-animation 200s linear infinite;
+        }
+
+        .stars::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 2px;
+            background: white;
+            box-shadow: 50vw 50vh white, 80vw 20vh white, 30vw 70vh white, 90vw 90vh white, 10vw 10vh white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite ease-in-out;
+        }
+
+        @keyframes stars-animation {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-100%);
+            }
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Universe Map Container */
+        .universe-map {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .universe-map h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+        }
+
+        .universe-map p {
+            font-size: 1.2rem;
+            color: #ccc;
+            margin-bottom: 30px;
+        }
+
+        /* Map Container */
+        .map-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .map-container img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .map-container img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .universe-map h1 {
+                font-size: 2rem;
+            }
+
+            .universe-map p {
+                font-size: 1rem;
+            }
+
+            .map-container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="universe">
+        <!-- Starry Background -->
+        <div class="stars"></div>
+
+        <!-- Universe Map Content -->
+        <div class="universe-map">
+            <h1>Starry Universe Map</h1>
+            <p>Explore the wonders of the cosmos and discover the beauty of the stars.</p>
+
+            <!-- Map Container -->
+            <div class="map-container">
+                <img id="randomMap" src="" alt="Your Place In The Universe Map">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Array of random universe map images
+        const maps = [
+            "https://via.placeholder.com/600x400/1B2735/FFFFFF?text=Map+1",
+            "https://via.placeholder.com/600x400/1B2735/FFFFFF?text=Map+2",
+            "https://via.placeholder.com/600x400/1B2735/FFFFFF?text=Map+3",
+            "https://via.placeholder.com/600x400/1B2735/FFFFFF?text=Map+4",
+            "https://via.placeholder.com/600x400/1B2735/FFFFFF?text=Map+5"
+        ];
+
+        // Function to display a random map
+        function displayRandomMap() {
+            const randomMapElement = document.getElementById('randomMap');
+            const randomIndex = Math.floor(Math.random() * maps.length);
+            randomMapElement.src = maps[randomIndex];
+        }
+
+        // Display a random map on page load
+        displayRandomMap();
+    </script>
+</body>
+</html>
