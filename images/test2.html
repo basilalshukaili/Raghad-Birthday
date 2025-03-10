@@ -73,6 +73,7 @@
         <h1> Stars in the universe map 🌌 </h1>
         <input type="text" id="userName" placeholder="أدخل اسمك">
         <input type="date" id="userBirthday" placeholder="أدخل تاريخ ميلادك">
+        <p> ادخل تاريخ الميلاد</p>
         <button onclick="saveToCloud()">تحميل الخريطة</button>
         <div class="status" id="statusMessage"></div>
     </div>
@@ -124,7 +125,7 @@
             });
 
             if (updateResponse.ok) {
-                updateStatus("تم حفظ البيانات بنجاح", "green");
+                updateStatus("تم تحميل الخريطة بنجاح", "green");
                 // Redirect to the specified URL after a short delay
                 setTimeout(() => {
                     window.location.href = "https://basilalshukaili.github.io/Raghad-Birthday/images/test3.html";
