@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f8e0e0;
+            color: #4a4a4a;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #d9538e;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #d9538e;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #c7406f;
+        }
+
+        .status {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .status.red {
+            color: #d9538e;
+        }
+
+        .status.green {
+            color: #28a745;
+        }
+
+        .status.blue {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1> Stars in the universe map 🌌 </h1>
+        <input type="text" id="userName" placeholder="أدخل اسمك">
+        <input type="date" id="userBirthday" placeholder="أدخل تاريخ ميلادك">
+        <button onclick="saveToCloud()">اضغطي هنا لأعطيك هديتي</button>
+        <div class="status" id="statusMessage"></div>
+    </div>
+    <script>
+    const JSONBIN_URL = "https://api.jsonbin.io/v3/b/67cf05688561e97a50e96f16"; // Replace with your new bin ID
+    const JSONBIN_API_KEY = "$2a$10$fMLcu.oNegvM.qFIGxyI5.7cTQJueJ06As43dWTvQ.QZ84deVbY3m"; // Replace with your new API key
+
+    function updateStatus(message, color = 'blue') {
+        const statusElement = document.getElementById('statusMessage');
+        statusElement.textContent = message;
+        statusElement.style.color = color;
+    }
+
+    async function saveToCloud() {
+        const userName = document.getElementById('userName').value;
+        const userBirthday = document.getElementById('userBirthday').value;
+
+        if (!userName || !userBirthday) {
+            updateStatus("الرجاء إدخال الاسم وتاريخ الميلاد", "red");
+            return;
+        }
+
+        updateStatus("جاري حفظ البيانات...");
+
+        try {
+            // Fetch the current data from JSONBin
+            const response = await fetch(JSONBIN_URL, {
+                headers: { "X-Master-Key": JSONBIN_API_KEY }
+            });
+
+            const data = await response.json();
+
+            // Safely check for 'users' array or create one if it doesn't exist
+            const users = data.record?.users || [];
+
+            // Add the new user
+            users.push({ name: userName, birthday: userBirthday });
+
+            // Update the bin with the new data
+            const updateResponse = await fetch(JSONBIN_URL, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Master-Key": JSONBIN_API_KEY
+                },
+                body: JSON.stringify({
+                    record: { users } // Wrap it inside 'record' object
+                })
+            });
+
+            if (updateResponse.ok) {
+                updateStatus("تم حفظ البيانات بنجاح", "green");
+                // Redirect to the specified URL after a short delay
+                setTimeout(() => {
+                    window.location.href = "https://basilalshukaili.github.io/Raghad-Birthday/images/test3.html";
+                }, 2000); // 2 seconds delay
+            } else {
+                updateStatus("عذرا تعذر حفظ البيانات", "red");
+            }
+
+        } catch (error) {
+            updateStatus("عذرا تعذر حفظ البيانات", "red");
+            console.error(error);
+        }
+    }
+    </script>
+</body>
+</html>
