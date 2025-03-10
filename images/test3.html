@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Starry Universe Map</title>
+    <title>Your Place in the Universe</title>
     <style>
         /* General Reset */
         * {
@@ -144,35 +144,14 @@
 
         <!-- Universe Map Content -->
         <div class="universe-map">
-            <h1>Starry Universe Map</h1>
-            <p>Explore the wonders of the cosmos and discover the beauty of the stars.</p>
+            <h1>Your Place in the Universe</h1>
+            <p>Discover where you stand in the vast cosmos.</p>
 
             <!-- Map Container -->
             <div class="map-container">
-                <img id="randomMap" src="" alt="Your Place In The Universe Map">
+                <img id="universeImage" src="https://th.bing.com/th/id/R.1116fd0150560efe74b5feeaf699f9dd?rik=EoWn2YoZLzbflw&riu=http%3a%2f%2fwww.lex.sk.ca%2fastro%2fDeepSky%2fNGC7209_55.jpg&ehk=ScACqw1vknqG%2bHZmS8M2k35ti4uJr0UHz46ENnNCu4U%3d&risl=&pid=ImgRaw&r=0" alt="Your Place in the Universe">
             </div>
         </div>
     </div>
-
-    <script>
-        // Array of random universe map images
-        const maps = [
-            "https://via.placeholder.com/600x400/1B2735/FFFFFF?text=Map+1",
-            "https://via.placeholder.com/600x400/1B2735/FFFFFF?text=Map+2",
-            "https://via.placeholder.com/600x400/1B2735/FFFFFF?text=Map+3",
-            "https://via.placeholder.com/600x400/1B2735/FFFFFF?text=Map+4",
-            "https://via.placeholder.com/600x400/1B2735/FFFFFF?text=Map+5"
-        ];
-
-        // Function to display a random map
-        function displayRandomMap() {
-            const randomMapElement = document.getElementById('randomMap');
-            const randomIndex = Math.floor(Math.random() * maps.length);
-            randomMapElement.src = maps[randomIndex];
-        }
-
-        // Display a random map on page load
-        displayRandomMap();
-    </script>
 </body>
 </html>
