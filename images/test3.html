@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Place in the Universe</title>
     <style>
-        /* General Reset */
+        /* Reset and Base Styles */
         * {
             margin: 0;
             padding: 0;
@@ -13,65 +13,124 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Orbitron', sans-serif;
             background: #000;
             color: #fff;
             overflow: hidden;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
         }
 
-        /* Starry Background */
+        /* Universe Container */
         .universe {
             position: relative;
             width: 100%;
             height: 100vh;
-            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            background: radial-gradient(circle at center, #0d1b2a 0%, #000 100%);
             overflow: hidden;
         }
 
-        /* Stars Animation */
+        /* Multi-Layered Starry Background */
         .stars {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
+            height: 250%;
+            background: transparent;
+            animation: stars-flow 200s linear infinite;
+            pointer-events: none;
+        }
+
+        .stars::before,
+        .stars::after,
+        .stars-layer2 {
+            content: '';
+            position: absolute;
+            width: 100%;
             height: 100%;
             background: transparent;
-            animation: stars-animation 200s linear infinite;
+        }
+
+        .stars::before {
+            box-shadow: 
+                5vw 10vh 1px #fff, 15vw 70vh 2px #e0e0e0, 25vw 40vh 1px #f0f0f0,
+                35vw 90vh 2px #fff, 45vw 20vh 1px #d0d0d0, 55vw 60vh 2px #e0e0e0,
+                65vw 30vh 1px #fff, 75vw 80vh 2px #f0f0f0, 85vw 50vh 1px #e0e0e0;
+            opacity: 0.9;
+            animation: twinkle 3s infinite ease-in-out;
         }
 
         .stars::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 2px;
-            height: 2px;
-            background: white;
-            box-shadow: 50vw 50vh white, 80vw 20vh white, 30vw 70vh white, 90vw 90vh white, 10vw 10vh white;
-            border-radius: 50%;
-            animation: twinkle 5s infinite ease-in-out;
+            box-shadow: 
+                10vw 15vh 1px #fff, 20vw 85vh 2px #e0e0e0, 30vw 45vh 1px #f0f0f0,
+                40vw 25vh 2px #fff, 50vw 65vh 1px #d0d0d0, 60vw 35vh 2px #e0e0e0,
+                70vw 95vh 1px #fff, 80vw 55vh 2px #f0f0f0, 90vw 75vh 1px #e0e0e0;
+            opacity: 0.7;
+            animation: twinkle 5s infinite ease-in-out reverse;
         }
 
-        @keyframes stars-animation {
-            from {
-                transform: translateY(0);
-            }
-            to {
-                transform: translateY(-100%);
-            }
+        .stars-layer2 {
+            box-shadow: 
+                12vw 22vh 1px #ccc, 22vw 88vh 2px #ddd, 32vw 52vh 1px #eee,
+                42vw 12vh 2px #fff, 52vw 72vh 1px #ccc, 62vw 32vh 2px #ddd,
+                72vw 92vh 1px #eee, 82vw 42vh 2px #fff, 92vw 62vh 1px #ddd;
+            opacity: 0.5;
+            animation: twinkle 4s infinite ease-in-out;
+        }
+
+        @keyframes stars-flow {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
         }
 
         @keyframes twinkle {
-            0%, 100% {
-                opacity: 0.5;
-            }
-            50% {
-                opacity: 1;
-            }
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Enhanced Nebula with Depth */
+        .nebula {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(147, 112, 219, 0.15) 0%, transparent 70%);
+            opacity: 0.4;
+            animation: nebula-glow 30s infinite ease-in-out;
+        }
+
+        .nebula::before,
+        .nebula::after {
+            content: '';
+            position: absolute;
+            background: radial-gradient(circle, rgba(255, 165, 0, 0.2) 0%, transparent 70%);
+        }
+
+        .nebula::before {
+            top: 10%;
+            left: 20%;
+            width: 400px;
+            height: 400px;
+            opacity: 0.3;
+            animation: nebula-glow 25s infinite ease-in-out;
+        }
+
+        .nebula::after {
+            top: 50%;
+            left: 60%;
+            width: 300px;
+            height: 300px;
+            opacity: 0.35;
+            animation: nebula-glow 20s infinite ease-in-out reverse;
+        }
+
+        @keyframes nebula-glow {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.1); }
         }
 
         /* Universe Map Container */
@@ -79,73 +138,136 @@
             position: relative;
             z-index: 2;
             text-align: center;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            padding: 50px;
+            background: rgba(10, 10, 20, 0.9);
+            border-radius: 25px;
+            box-shadow: 0 0 50px rgba(147, 112, 219, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            animation: map-entry 1.8s ease-out;
+        }
+
+        @keyframes map-entry {
+            from { opacity: 0; transform: translateY(50px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .universe-map h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #ffd700;
-            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            font-size: 4rem;
+            margin-bottom: 25px;
+            color: #9370db;
+            text-shadow: 0 0 20px #9370db, 0 0 40px #ff00ff, 0 0 60px #ff69b4;
+            letter-spacing: 3px;
+            position: relative;
+        }
+
+        .universe-map h1::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #9370db, transparent);
+            animation: glow-line 2s infinite ease-in-out;
+        }
+
+        @keyframes glow-line {
+            0%, 100% { width: 100px; opacity: 0.5; }
+            50% { width: 150px; opacity: 1; }
         }
 
         .universe-map p {
-            font-size: 1.2rem;
-            color: #ccc;
-            margin-bottom: 30px;
+            font-size: 1.5rem;
+            color: #d3d3d3;
+            margin-bottom: 40px;
+            font-family: 'Roboto', sans-serif;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
         }
 
         /* Map Container */
         .map-container {
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(147, 112, 219, 0.15), rgba(255, 165, 0, 0.1));
+            border-radius: 20px;
+            box-shadow: 0 0 40px rgba(147, 112, 219, 0.6);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-container:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 0 60px rgba(147, 112, 219, 0.9);
         }
 
         .map-container img {
             width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(255, 165, 0, 0.7);
+            transition: transform 0.4s ease, filter 0.4s ease;
         }
 
-        .map-container img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+        .map-container:hover img {
+            transform: scale(1.08);
+            filter: brightness(1.2);
+        }
+
+        /* Interactive Overlay */
+        .map-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 1;
+        }
+
+        .map-container:hover::before {
+            opacity: 1;
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
+            .universe-map {
+                padding: 30px;
+            }
+
             .universe-map h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
 
             .universe-map p {
-                font-size: 1rem;
+                font-size: 1.2rem;
             }
 
             .map-container {
-                padding: 10px;
+                max-width: 95%;
+                padding: 20px;
             }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="universe">
-        <!-- Starry Background -->
-        <div class="stars"></div>
+        <!-- Cosmic Background -->
+        <div class="stars">
+            <div class="stars-layer2"></div>
+        </div>
+        <div class="nebula"></div>
 
         <!-- Universe Map Content -->
         <div class="universe-map">
             <h1>Your Place in the Universe</h1>
-            <p>Discover where you stand in the vast cosmos.</p>
+            <p>Embark on a journey to explore your cosmic significance.</p>
 
             <!-- Map Container -->
             <div class="map-container">
