@@ -273,7 +273,66 @@
             <div class="map-container">
                 <img id="universeImage" src="https://th.bing.com/th/id/R.1116fd0150560efe74b5feeaf699f9dd?rik=EoWn2YoZLzbflw&riu=http%3a%2f%2fwww.lex.sk.ca%2fastro%2fDeepSky%2fNGC7209_55.jpg&ehk=ScACqw1vknqG%2bHZmS8M2k35ti4uJr0UHz46ENnNCu4U%3d&risl=&pid=ImgRaw&r=0" alt="Your Place in the Universe">
             </div>
+            
+             
+            <div class="phone-input-container">
+                <input type="text" id="phoneNumber" placeholder="Enter your phone number" required>
+                <button id="downloadButton">Download Stars Map</button>
+            </div>
         </div>
     </div>
+       <script>
+        // JSONBin API details
+        const binId = '67d0c9138561e97a50ea36a3';
+        const apiKey = '$2a$10$fMLcu.oNegvM.qFIGxyI5.7cTQJueJ06As43dWTvQ.QZ84deVbY3m';
+        const jsonBinUrl = `https://api.jsonbin.io/v3/b/${binId}`;
+
+        // Function to save phone number to JSONBin
+        async function savePhoneNumber(phoneNumber) {
+            const data = { phone: phoneNumber };
+            const response = await fetch(jsonBinUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': apiKey,
+                },
+                body: JSON.stringify(data),
+            });
+            return response.json();
+        }
+
+        // Function to download the image
+        function downloadImage() {
+            const imageUrl = document.getElementById('universeImage').src;
+            const link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = 'stars-map.jpg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Event listener for the download button
+        document.getElementById('downloadButton').addEventListener('click', async () => {
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            if (!phoneNumber) {
+                alert('Please enter your phone number.');
+                return;
+            }
+
+            try {
+                // Save phone number to JSONBin
+                const result = await savePhoneNumber(phoneNumber);
+                console.log('Phone number saved:', result);
+
+                // Download the image
+                downloadImage();
+            } catch (error) {
+                console.error('Error saving phone number:', error);
+                alert('Failed to save phone number. Please try again.');
+            }
+        });
+    </script>
+
 </body>
 </html>
