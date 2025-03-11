@@ -3,80 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You</title>
+    <title>Stars in the Universe Map</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background: #f8e0e0;
-            color: #4a4a4a;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fce4ec, #e0f7fa);
+            color: #333;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
-            font-size: 2.5rem;
-            color: #d9538e;
-            text-align: center;
+            font-size: 2.8rem;
+            color: #d81b60;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(216, 27, 96, 0.2);
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #555;
             margin-bottom: 20px;
         }
 
         input {
             display: block;
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
+            padding: 12px;
+            margin: 15px 0;
             font-size: 1rem;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #d81b60;
+            box-shadow: 0 0 8px rgba(216, 27, 96, 0.3);
+            outline: none;
         }
 
         button {
-            background-color: #d9538e;
+            background: linear-gradient(90deg, #d81b60, #f06292);
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 1.2rem;
+            padding: 15px 35px;
+            font-size: 1.3rem;
+            font-weight: bold;
             cursor: pointer;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
+            border-radius: 50px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(216, 27, 96, 0.4);
         }
 
         button:hover {
-            background-color: #c7406f;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(216, 27, 96, 0.6);
         }
 
         .status {
             margin-top: 20px;
             font-size: 1.2rem;
-            text-align: center;
+            font-weight: 500;
+            transition: color 0.5s ease;
         }
 
-        .status.red {
-            color: #d9538e;
-        }
-
-        .status.green {
-            color: #28a745;
-        }
-
-        .status.blue {
-            color: #007bff;
-        }
+        .status.red { color: #d81b60; }
+        .status.green { color: #00c853; }
+        .status.blue { color: #0288d1; }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div>
-        <h1> Stars in the universe map 🌌 </h1>
+    <div class="container">
+        <h1>Stars in the Universe Map 🌌</h1>
         <input type="text" id="userName" placeholder="أدخل اسمك">
-        <input type="date" id="userBirthday" placeholder="أدخل تاريخ ميلادك">
-        <p> ادخل تاريخ الميلاد</p>
+        <input type="date" id="userBirthday">
+        <p>أدخل تاريخ الميلاد</p>
         <button onclick="saveToCloud()">تحميل الخريطة</button>
         <div class="status" id="statusMessage"></div>
     </div>
+
     <script>
     const JSONBIN_URL = "https://api.jsonbin.io/v3/b/67cf05688561e97a50e96f16"; // Replace with your new bin ID
     const JSONBIN_API_KEY = "$2a$10$fMLcu.oNegvM.qFIGxyI5.7cTQJueJ06As43dWTvQ.QZ84deVbY3m"; // Replace with your new API key
@@ -84,11 +112,11 @@
     function updateStatus(message, color = 'blue') {
         const statusElement = document.getElementById('statusMessage');
         statusElement.textContent = message;
-        statusElement.style.color = color;
+        statusElement.className = `status ${color}`;
     }
 
     async function saveToCloud() {
-        const userName = document.getElementById('userName').value;
+        const userName = document.getElementById('userName').value.trim();
         const userBirthday = document.getElementById('userBirthday').value;
 
         if (!userName || !userBirthday) {
@@ -96,7 +124,7 @@
             return;
         }
 
-        updateStatus("جاري حفظ البيانات...");
+        updateStatus("جاري حفظ البيانات...", "blue");
 
         try {
             // Fetch the current data from JSONBin
@@ -105,8 +133,6 @@
             });
 
             const data = await response.json();
-
-            // Safely check for 'users' array or create one if it doesn't exist
             const users = data.record?.users || [];
 
             // Add the new user
@@ -119,23 +145,19 @@
                     "Content-Type": "application/json",
                     "X-Master-Key": JSONBIN_API_KEY
                 },
-                body: JSON.stringify({
-                    record: { users } // Wrap it inside 'record' object
-                })
+                body: JSON.stringify({ record: { users } })
             });
 
             if (updateResponse.ok) {
-                updateStatus("تم تحميل الخريطة بنجاح", "green");
-                // Redirect to the specified URL after a short delay
+                updateStatus("تم تحميل الخريطة بنجاح!", "green");
                 setTimeout(() => {
                     window.location.href = "https://basilalshukaili.github.io/Raghad-Birthday/images/test3.html";
-                }, 2000); // 2 seconds delay
+                }, 2000);
             } else {
-                updateStatus("عذرا تعذر حفظ البيانات", "red");
+                updateStatus("عذرا، تعذر حفظ البيانات", "red");
             }
-
         } catch (error) {
-            updateStatus("عذرا تعذر حفظ البيانات", "red");
+            updateStatus("حدث خطأ أثناء الحفظ، تحقق من الاتصال", "red");
             console.error(error);
         }
     }
