@@ -7,143 +7,108 @@ document.addEventListener('DOMContentLoaded', () => {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
 
-    function createMusic() {
+    function createShockMusic() {
         if (!audioContext) initAudio();
-        
-        // Create multiple oscillators for a richer sound
-        const leadOsc = audioContext.createOscillator();
-        const chordOsc1 = audioContext.createOscillator();
-        const chordOsc2 = audioContext.createOscillator();
-        const bassOsc = audioContext.createOscillator();
-        const noiseOsc = audioContext.createOscillator();
 
-        // Create effects
-        const leadGain = audioContext.createGain();
-        const chordGain = audioContext.createGain();
-        const bassGain = audioContext.createGain();
-        const noiseGain = audioContext.createGain();
-        const filter = audioContext.createBiquadFilter();
-        const delay = audioContext.createDelay();
-        const delayGain = audioContext.createGain();
+        const osc1 = audioContext.createOscillator();
+        const osc2 = audioContext.createOscillator();
+        const osc3 = audioContext.createOscillator();
+        const osc4 = audioContext.createOscillator();
+        const noise = audioContext.createOscillator();
+
+        const gain1 = audioContext.createGain();
+        const gain2 = audioContext.createGain();
+        const gain3 = audioContext.createGain();
         const masterGain = audioContext.createGain();
+        const filter = audioContext.createBiquadFilter();
+        const distortion = audioContext.createWaveShaper();
 
-        // Configure oscillators
-        leadOsc.type = 'triangle';
-        chordOsc1.type = 'sine';
-        chordOsc2.type = 'sine';
-        bassOsc.type = 'sawtooth';
-        noiseOsc.type = 'whitenoise' in audioContext ? 'white' : 'sine'; // Fallback
+        osc1.type = 'sawtooth';
+        osc2.type = 'square';
+        osc3.type = 'triangle';
+        osc4.type = 'sine';
+        noise.type = 'whitenoise' in audioContext ? 'white' : 'square';
 
-        // Initial frequencies (C minor scale)
-        const scale = [261.63, 311.13, 349.23, 392.00, 415.30, 466.16, 523.25]; // Cm scale
-        let leadIndex = 0;
-        let chordProgression = [
-            [261.63, 311.13, 392.00],  // Cm
-            [277.18, 329.63, 415.30],  // C#maj
-            [233.08, 277.18, 349.23],  // A♭maj
-            [246.94, 311.13, 392.00]   // B♭m
-        ];
-        let chordIndex = 0;
+        distortion.curve = new Float32Array(44100).map((_, i) => 
+            Math.tanh(i / 22050 * 20) * 0.5
+        );
+        distortion.oversample = '4x';
 
-        // Set up effects
-        filter.type = 'lowpass';
-        filter.frequency.value = 1200;
-        filter.Q.value = 2;
+        filter.type = 'bandpass';
+        filter.Q.value = 10;
 
-        delay.delayTime.value = 0.25;
-        delayGain.gain.value = 0.3;
+        gain1.gain.value = 0.4;
+        gain2.gain.value = 0.3;
+        gain3.gain.value = 0.2;
+        masterGain.gain.value = 0.9;
 
-        // Volume levels
-        leadGain.gain.value = 0.3;
-        chordGain.gain.value = 0.2;
-        bassGain.gain.value = 0.25;
-        noiseGain.gain.value = 0.05;
-        masterGain.gain.value = 0.8;
-
-        // Connections
-        leadOsc.connect(leadGain);
-        chordOsc1.connect(chordGain);
-        chordOsc2.connect(chordGain);
-        bassOsc.connect(bassGain);
-        noiseOsc.connect(noiseGain);
-
-        leadGain.connect(filter);
-        chordGain.connect(filter);
-        bassGain.connect(filter);
-        noiseGain.connect(filter);
-
-        filter.connect(delay);
-        delay.connect(delayGain);
-        delayGain.connect(filter); // Feedback loop
+        osc1.connect(gain1);
+        osc2.connect(gain1);
+        osc3.connect(gain2);
+        osc4.connect(gain3);
+        noise.connect(gain3);
+        gain1.connect(distortion);
+        gain2.connect(filter);
+        gain3.connect(filter);
+        distortion.connect(masterGain);
         filter.connect(masterGain);
         masterGain.connect(audioContext.destination);
 
-        // Start time
         const startTime = audioContext.currentTime;
-        leadOsc.start(startTime);
-        chordOsc1.start(startTime);
-        chordOsc2.start(startTime);
-        bassOsc.start(startTime);
-        noiseOsc.start(startTime);
+        osc1.start(startTime);
+        osc2.start(startTime);
+        osc3.start(startTime);
+        osc4.start(startTime);
+        noise.start(startTime);
 
-        // Music animation
-        function animateMusic() {
+        function shockLoop() {
             if (!isPlaying) return;
             const now = audioContext.currentTime;
 
-            // Lead melody
-            leadOsc.frequency.setValueAtTime(
-                scale[leadIndex % scale.length] * (Math.random() > 0.7 ? 2 : 1),
+            osc1.frequency.setValueAtTime(
+                200 + Math.pow(Math.sin(now * 5), 2) * 1000,
                 now
             );
-            leadIndex = (leadIndex + Math.floor(Math.random() * 3)) % scale.length;
-
-            // Chord progression
-            if (Math.floor(now * 2) % 4 === 0) {
-                const currentChord = chordProgression[chordIndex];
-                chordOsc1.frequency.setValueAtTime(currentChord[0], now);
-                chordOsc2.frequency.setValueAtTime(currentChord[2], now);
-                chordIndex = (chordIndex + 1) % chordProgression.length;
-            }
-
-            // Bass movement
-            bassOsc.frequency.setValueAtTime(
-                scale[0] / 2 + Math.sin(now * 0.5) * 10,
+            osc2.frequency.setValueAtTime(
+                300 + Math.cos(now * 3) * 800 * (Math.random() > 0.8 ? 2 : 1),
+                now
+            );
+            osc3.frequency.setValueAtTime(
+                100 + Math.sin(now * 8) * 400,
+                now
+            );
+            osc4.frequency.setValueAtTime(
+                50 + Math.pow(Math.random(), 3) * 2000,
                 now
             );
 
-            // Filter sweep
-            filter.frequency.setTargetAtTime(
-                800 + Math.sin(now * 0.3) * 600,
-                now,
-                0.1
+            filter.frequency.setValueAtTime(
+                500 + Math.sin(now * 10) * 4000,
+                now
             );
 
-            // Noise pulse
-            noiseGain.gain.setTargetAtTime(
-                0.05 + Math.sin(now * 4) * 0.03,
+            gain1.gain.setTargetAtTime(
+                0.4 + Math.sin(now * 15) * 0.3,
                 now,
-                0.05
+                0.02
             );
 
-            // Schedule next update
-            setTimeout(animateMusic, 150 + Math.random() * 100);
+            setTimeout(shockLoop, 50 + Math.random() * 100);
         }
 
-        animateMusic();
+        shockLoop();
 
-        // Stop function
-        function stopMusic() {
-            leadOsc.stop();
-            chordOsc1.stop();
-            chordOsc2.stop();
-            bassOsc.stop();
-            noiseOsc.stop();
+        function stopShock() {
+            osc1.stop();
+            osc2.stop();
+            osc3.stop();
+            osc4.stop();
+            noise.stop();
             isPlaying = false;
             playButton.textContent = 'Play Music';
         }
 
-        return stopMusic;
+        return stopShock;
     }
 
     let stopFunction = null;
@@ -152,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isPlaying) {
             isPlaying = true;
             playButton.textContent = 'Stop Music';
-            stopFunction = createMusic();
+            stopFunction = createShockMusic();
         } else {
             isPlaying = false;
             if (stopFunction) stopFunction();
