@@ -1,108 +1,153 @@
-// Wait for the document to be fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     const playButton = document.getElementById('playButton');
     let isPlaying = false;
     let audioContext = null;
 
-    // Initialize Audio Context
     function initAudio() {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
 
-    // Create and play the music
     function createMusic() {
         if (!audioContext) initAudio();
+        
+        // Create multiple oscillators for a richer sound
+        const leadOsc = audioContext.createOscillator();
+        const chordOsc1 = audioContext.createOscillator();
+        const chordOsc2 = audioContext.createOscillator();
+        const bassOsc = audioContext.createOscillator();
+        const noiseOsc = audioContext.createOscillator();
 
-        // Create oscillators for a rich sound
-        const osc1 = audioContext.createOscillator();
-        const osc2 = audioContext.createOscillator();
-        const osc3 = audioContext.createOscillator();
-
-        // Create gain nodes for volume control
-        const gainNode = audioContext.createGain();
+        // Create effects
+        const leadGain = audioContext.createGain();
+        const chordGain = audioContext.createGain();
+        const bassGain = audioContext.createGain();
+        const noiseGain = audioContext.createGain();
         const filter = audioContext.createBiquadFilter();
+        const delay = audioContext.createDelay();
+        const delayGain = audioContext.createGain();
+        const masterGain = audioContext.createGain();
 
         // Configure oscillators
-        osc1.type = 'sine';      // Base melody
-        osc1.frequency.value = 261.63; // Middle C
+        leadOsc.type = 'triangle';
+        chordOsc1.type = 'sine';
+        chordOsc2.type = 'sine';
+        bassOsc.type = 'sawtooth';
+        noiseOsc.type = 'whitenoise' in audioContext ? 'white' : 'sine'; // Fallback
 
-        osc2.type = 'triangle';  // Harmony
-        osc2.frequency.value = 329.63; // E
+        // Initial frequencies (C minor scale)
+        const scale = [261.63, 311.13, 349.23, 392.00, 415.30, 466.16, 523.25]; // Cm scale
+        let leadIndex = 0;
+        let chordProgression = [
+            [261.63, 311.13, 392.00],  // Cm
+            [277.18, 329.63, 415.30],  // C#maj
+            [233.08, 277.18, 349.23],  // A♭maj
+            [246.94, 311.13, 392.00]   // B♭m
+        ];
+        let chordIndex = 0;
 
-        osc3.type = 'sawtooth';  // Bass
-        osc3.frequency.value = 130.81; // C an octave below
-
-        // Configure filter
+        // Set up effects
         filter.type = 'lowpass';
-        filter.frequency.value = 1000;
-        filter.Q.value = 1;
+        filter.frequency.value = 1200;
+        filter.Q.value = 2;
 
-        // Create a simple arpeggio pattern
-        let time = audioContext.currentTime;
-        const pattern = [261.63, 329.63, 392.00, 523.25]; // C, E, G, C (octave up)
-        let patternIndex = 0;
+        delay.delayTime.value = 0.25;
+        delayGain.gain.value = 0.3;
 
-        // Connect nodes
-        osc1.connect(filter);
-        osc2.connect(filter);
-        osc3.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+        // Volume levels
+        leadGain.gain.value = 0.3;
+        chordGain.gain.value = 0.2;
+        bassGain.gain.value = 0.25;
+        noiseGain.gain.value = 0.05;
+        masterGain.gain.value = 0.8;
 
-        // Set initial gain
-        gainNode.gain.setValueAtTime(0.2, time);
+        // Connections
+        leadOsc.connect(leadGain);
+        chordOsc1.connect(chordGain);
+        chordOsc2.connect(chordGain);
+        bassOsc.connect(bassGain);
+        noiseOsc.connect(noiseGain);
 
-        // Start oscillators
-        osc1.start(time);
-        osc2.start(time);
-        osc3.start(time);
+        leadGain.connect(filter);
+        chordGain.connect(filter);
+        bassGain.connect(filter);
+        noiseGain.connect(filter);
 
-        // Animation function for dynamic music
+        filter.connect(delay);
+        delay.connect(delayGain);
+        delayGain.connect(filter); // Feedback loop
+        filter.connect(masterGain);
+        masterGain.connect(audioContext.destination);
+
+        // Start time
+        const startTime = audioContext.currentTime;
+        leadOsc.start(startTime);
+        chordOsc1.start(startTime);
+        chordOsc2.start(startTime);
+        bassOsc.start(startTime);
+        noiseOsc.start(startTime);
+
+        // Music animation
         function animateMusic() {
             if (!isPlaying) return;
-
             const now = audioContext.currentTime;
-            
-            // Arpeggio pattern
-            osc1.frequency.setValueAtTime(pattern[patternIndex], now);
-            patternIndex = (patternIndex + 1) % pattern.length;
 
-            // Modulate filter
+            // Lead melody
+            leadOsc.frequency.setValueAtTime(
+                scale[leadIndex % scale.length] * (Math.random() > 0.7 ? 2 : 1),
+                now
+            );
+            leadIndex = (leadIndex + Math.floor(Math.random() * 3)) % scale.length;
+
+            // Chord progression
+            if (Math.floor(now * 2) % 4 === 0) {
+                const currentChord = chordProgression[chordIndex];
+                chordOsc1.frequency.setValueAtTime(currentChord[0], now);
+                chordOsc2.frequency.setValueAtTime(currentChord[2], now);
+                chordIndex = (chordIndex + 1) % chordProgression.length;
+            }
+
+            // Bass movement
+            bassOsc.frequency.setValueAtTime(
+                scale[0] / 2 + Math.sin(now * 0.5) * 10,
+                now
+            );
+
+            // Filter sweep
             filter.frequency.setTargetAtTime(
-                500 + Math.sin(now) * 300,
+                800 + Math.sin(now * 0.3) * 600,
                 now,
                 0.1
             );
 
-            // Pulse the bass
-            osc3.frequency.setTargetAtTime(
-                130.81 + Math.sin(now * 2) * 20,
+            // Noise pulse
+            noiseGain.gain.setTargetAtTime(
+                0.05 + Math.sin(now * 4) * 0.03,
                 now,
-                0.1
+                0.05
             );
 
             // Schedule next update
-            setTimeout(animateMusic, 250);
+            setTimeout(animateMusic, 150 + Math.random() * 100);
         }
+
+        animateMusic();
 
         // Stop function
         function stopMusic() {
-            osc1.stop();
-            osc2.stop();
-            osc3.stop();
+            leadOsc.stop();
+            chordOsc1.stop();
+            chordOsc2.stop();
+            bassOsc.stop();
+            noiseOsc.stop();
             isPlaying = false;
             playButton.textContent = 'Play Music';
         }
-
-        // Animate the music
-        animateMusic();
 
         return stopMusic;
     }
 
     let stopFunction = null;
 
-    // Button click handler
     playButton.addEventListener('click', () => {
         if (!isPlaying) {
             isPlaying = true;
