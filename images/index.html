@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Skills Galaxy | Basil's Journey</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="description" content="Track your cybersecurity skills progress through an interactive space-themed galaxy visualization">
+</head>
+<body>
+    <div class="stars-container">
+        <div id="stars"></div>
+        <div id="stars2"></div>
+        <div id="stars3"></div>
+    </div>
+
+    <header>
+        <div class="logo">
+            <i class="fas fa-shield-alt"></i>
+            <h1>CyberSkills Galaxy</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="active" id="dashboard-link">Dashboard</a></li>
+                <li><a href="#" id="galaxy-link">Skill Galaxy</a></li>
+                <li><a href="#" id="progress-link">Progress Tracker</a></li>
+            </ul>
+        </nav>
+        <div class="user-profile">
+            <span class="user-name">Basil</span>
+            <div class="overall-progress">
+                <div class="progress-circle">
+                    <span class="progress-text">0%</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Dashboard View -->
+        <section id="dashboard" class="view active">
+            <div class="dashboard-header">
+                <h2>Your Cybersecurity Journey</h2>
+                <p>Track your progress through the vast galaxy of cybersecurity skills</p>
+            </div>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <h3>Overall Progress</h3>
+                    <div class="progress-circle large">
+                        <span class="progress-text">0%</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Skills Completed</h3>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">of 500+ skills</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Categories Mastered</h3>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">of 9 categories</div>
+                </div>
+            </div>
+            
+            <div class="dashboard-sections">
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <div class="activity-list">
+                        <p class="empty-state">No skills completed yet. Start your journey by exploring the Skill Galaxy!</p>
+                    </div>
+                </div>
+                
+                <div class="recommended-skills">
+                    <h3>Recommended Next Steps</h3>
+                    <div class="skill-cards">
+                        <div class="skill-card">
+                            <div class="skill-icon"><i class="fas fa-network-wired"></i></div>
+                            <div class="skill-info">
+                                <h4>Networking Fundamentals</h4>
+                                <p>Begin with the OSI Model and networking basics</p>
+                            </div>
+                            <a href="#" class="explore-btn" data-category="1.1">Explore</a>
+                        </div>
+                        <div class="skill-card">
+                            <div class="skill-icon"><i class="fas fa-laptop-code"></i></div>
+                            <div class="skill-info">
+                                <h4>Security Concepts</h4>
+                                <p>Learn the core principles of cybersecurity</p>
+                            </div>
+                            <a href="#" class="explore-btn" data-category="2.1">Explore</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category-overview">
+                <h3>Skill Categories</h3>
+                <div class="category-grid">
+                    <div class="category-card" data-category="1">
+                        <div class="category-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <h4>Pre-Cybersecurity Fundamentals</h4>
+                        <div class="category-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="progress-text">0%</span>
+                        </div>
+                    </div>
+                    <div class="category-card" data-category="2">
+                        <div class="category-icon"><i class="fas fa-shield-alt"></i></div>
+                        <h4>Security Fundamentals</h4>
+                        <div class="category-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="progress-text">0%</span>
+                        </div>
+                    </div>
+                    <div class="category-card" data-category="3">
+                        <div class="category-icon"><i class="fas fa-lock"></i></div>
+                        <h4>Defensive Security</h4>
+                        <div class="category-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="progress-text">0%</span>
+                        </div>
+                    </div>
+                    <div class="category-card" data-category="4">
+                        <div class="category-icon"><i class="fas fa-user-secret"></i></div>
+                        <h4>Offensive Security</h4>
+                        <div class="category-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="progress-text">0%</span>
+                        </div>
+                    </div>
+                    <div class="category-card" data-category="5">
+                        <div class="category-icon"><i class="fas fa-drafting-compass"></i></div>
+                        <h4>Security Architecture</h4>
+                        <div class="category-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="progress-text">0%</span>
+                        </div>
+                    </div>
+                    <div class="category-card" data-category="6">
+                        <div class="category-icon"><i class="fas fa-balance-scale"></i></div>
+                        <h4>Governance, Risk, and Compliance</h4>
+                        <div class="category-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="progress-text">0%</span>
+                        </div>
+                    </div>
+                    <div class="category-card" data-category="7">
+                        <div class="category-icon"><i class="fas fa-microchip"></i></div>
+                        <h4>Specialized Security Domains</h4>
+                        <div class="category-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="progress-text">0%</span>
+                        </div>
+                    </div>
+                    <div class="category-card" data-category="8">
+                        <div class="category-icon"><i class="fas fa-rocket"></i></div>
+                        <h4>Advanced Security Topics</h4>
+                        <div class="category-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="progress-text">0%</span>
+                        </div>
+                    </div>
+                    <div class="category-card" data-category="9">
+                        <div class="category-icon"><i class="fas fa-user-astronaut"></i></div>
+                        <h4>Security Career Development</h4>
+                        <div class="category-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%;"></div>
+                            </div>
+                            <span class="progress-text">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Galaxy View -->
+        <section id="galaxy" class="view">
+            <div class="galaxy-controls">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search skills...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="filter-controls">
+                    <select id="category-filter">
+                        <option value="all">All Categories</option>
+                        <option value="1">Pre-Cybersecurity Fundamentals</option>
+                        <option value="2">Security Fundamentals</option>
+                        <option value="3">Defensive Security</option>
+                        <option value="4">Offensive Security</option>
+                        <option value="5">Security Architecture</option>
+                        <option value="6">Governance, Risk, and Compliance</option>
+                        <option value="7">Specialized Security Domains</option>
+                        <option value="8">Advanced Security Topics</option>
+                        <option value="9">Security Career Development</option>
+                    </select>
+                    <div class="zoom-controls">
+                        <button id="zoom-in"><i class="fas fa-plus"></i></button>
+                        <button id="zoom-out"><i class="fas fa-minus"></i></button>
+                        <button id="reset-view"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="galaxy-container">
+                <canvas id="galaxy-canvas"></canvas>
+                <div id="skill-tooltip" class="tooltip hidden">
+                    <h4 class="tooltip-title">Skill Name</h4>
+                    <p class="tooltip-category">Category</p>
+                </div>
+            </div>
+            
+            <div class="skill-details-panel">
+                <div class="panel-header">
+                    <h3>Skill Details</h3>
+                    <button class="close-panel"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="panel-content">
+                    <div class="skill-header">
+                        <h4 id="skill-name">Select a skill</h4>
+                        <span id="skill-id" class="skill-id"></span>
+                    </div>
+                    <div class="skill-description">
+                        <p id="skill-description">Click on a skill in the galaxy to view its details.</p>
+                    </div>
+                    <div class="skill-status">
+                        <span class="status-label">Status:</span>
+                        <span id="skill-status" class="status-value">Not Started</span>
+                    </div>
+                    <div class="skill-prerequisites">
+                        <h5>Prerequisites</h5>
+                        <ul id="prerequisites-list">
+                            <li class="empty-state">No prerequisites</li>
+                        </ul>
+                    </div>
+                    <div class="skill-actions">
+                        <button id="mark-complete" class="btn primary">Mark as Complete</button>
+                        <button id="mark-incomplete" class="btn secondary">Mark as Incomplete</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progress Tracker View -->
+        <section id="progress-tracker" class="view">
+            <div class="progress-header">
+                <h2>Your Progress Tracker</h2>
+                <div class="progress-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Overall Completion</span>
+                        <div class="progress-circle large">
+                            <span class="progress-text">0%</span>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Skills Completed</span>
+                        <span class="summary-value">0/500+</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Time Tracking</span>
+                        <span class="summary-value">Journey started <span id="journey-start-date">today</span></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-charts">
+                <div class="chart-container">
+                    <h3>Progress by Category</h3>
+                    <canvas id="category-progress-chart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Skill Acquisition Timeline</h3>
+                    <canvas id="timeline-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="completed-skills">
+                <h3>Completed Skills</h3>
+                <div class="skills-table-container">
+                    <table class="skills-table">
+                        <thead>
+                            <tr>
+                                <th>Skill ID</th>
+                                <th>Skill Name</th>
+                                <th>Category</th>
+                                <th>Completed On</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="completed-skills-list">
+                            <tr class="empty-state">
+                                <td colspan="5">No skills completed yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="skill-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-skill-name">Skill Name</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-skill-description">Skill description goes here.</p>
+                <div class="modal-skill-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Category:</span>
+                        <span id="modal-skill-category">Category</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">ID:</span>
+                        <span id="modal-skill-id">ID</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Status:</span>
+                        <span id="modal-skill-status">Not Started</span>
+                    </div>
+                </div>
+                <div class="modal-skill-prerequisites">
+                    <h4>Prerequisites</h4>
+                    <ul id="modal-prerequisites-list">
+                        <li class="empty-state">No prerequisites</li>
+                    </ul>
+                </div>
+                <div class="modal-skill-related">
+                    <h4>Related Skills</h4>
+                    <ul id="modal-related-skills">
+                        <li class="empty-state">No related skills</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-mark-complete" class="btn primary">Mark as Complete</button>
+                <button id="modal-mark-incomplete" class="btn secondary">Mark as Incomplete</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 CyberSkills Galaxy | Created for Basil</p>
+            <p>Version 1.0.0</p>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
