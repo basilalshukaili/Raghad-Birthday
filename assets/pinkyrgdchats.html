@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search chat...">
+            <div class="search-controls">
+                <span id="matchCount">0 matches</span>
+                <button id="prevMatch" disabled>Previous</button>
+                <button id="nextMatch" disabled>Next</button>
+            </div>
+        </div>
+        <div class="chat-container" id="chatContainer"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
