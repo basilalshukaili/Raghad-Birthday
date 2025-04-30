@@ -1,0 +1,154 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.search-bar {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    z-index: 10;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+}
+
+#searchInput:focus {
+    border-color: #007bff;
+}
+
+.search-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+#matchCount {
+    flex-grow: 1;
+}
+
+button {
+    padding: 8px 12px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+    background: #0056b3;
+}
+
+.chat-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.message {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.message.pinky {
+    align-items: flex-start;
+}
+
+.message.r {
+    align-items: flex-end;
+}
+
+.message-content {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 12px;
+    position: relative;
+}
+
+.message.pinky .message-content {
+    background: #e9ecef;
+    color: #333;
+}
+
+.message.r .message-content {
+    background: #007bff;
+    color: #fff;
+}
+
+.timestamp {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.highlight {
+    background: #ffeb3b;
+    border-radius: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #222;
+        color: #ddd;
+    }
+
+    .search-bar, .chat-container {
+        background: #333;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    #searchInput {
+        background: #444;
+        color: #ddd;
+        border-color: #555;
+    }
+
+    .message.pinky .message-content {
+        background: #444;
+        color: #ddd;
+    }
+
+    .message.r .message-content {
+        background: #0056b3;
+    }
+
+    .timestamp {
+        color: #aaa;
+    }
+}
