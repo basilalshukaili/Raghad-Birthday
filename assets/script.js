@@ -16,12 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
             renderMessages(messages);
         })
         .catch(error => {
-            chatContainer.innerHTML = '<p>Error loading chat: ' + error + '</p>';
+            chatContainer.innerHTML = '<p>خطأ في تحميل الدردشة: ' + error + '</p>';
         });
 
-    // Parse chat.txt into messages array
+    // Parse chat.txt into messages array, normalizing Unicode
     function parseChat(text) {
-        const lines = text.split('\n');
+        // Normalize Unicode to handle bidi and hidden characters
+        const normalizedText = text.normalize('NFKC');
+        const lines = normalizedText.split('\n');
         const regex = /\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\] (Pinky|R): (.*)/;
         return lines
             .map(line => {
@@ -30,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return {
                         timestamp: match[1],
                         sender: match[2].toLowerCase(),
-                        content: match[3]
+                        content: match[3].trim()
                     };
                 }
                 return null;
@@ -45,19 +47,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${msg.sender}`;
             messageDiv.innerHTML = `
-                <div class="message-content">${msg.content}</div>
+                <div class="message-content">${escapeHtml(msg.content)}</div>
                 <div class="timestamp">${formatTimestamp(msg.timestamp)}</div>
             `;
             chatContainer.appendChild(messageDiv);
         });
     }
 
+    // Escape HTML to prevent injection
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     // Format timestamp for display
     function formatTimestamp(timestamp) {
         const date = new Date(timestamp);
-        return date.toLocaleString('en-US', {
+        return date.toLocaleString('ar-EG', {
             year: 'numeric',
-            month: 'short',
+            month: 'long',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
@@ -67,12 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Real-time search
     searchInput.addEventListener('input', () => {
-        const query = searchInput.value.trim();
+        const query = searchInput.value.trim().normalize('NFKC');
         clearHighlights();
         if (query) {
             highlightMatches(query);
         } else {
-            matchCount.textContent = '0 matches';
+            matchCount.textContent = '0 تطابقات';
             prevMatch.disabled = true;
             nextMatch.disabled = true;
         }
@@ -81,11 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Highlight search matches
     function highlightMatches(query) {
         highlightedSpans = [];
-        const regex = new RegExp(`(${query})`, 'gi');
+        const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
         let matchCountTotal = 0;
 
         Array.from(chatContainer.getElementsByClassName('message-content')).forEach(contentDiv => {
-            const text = contentDiv.textContent;
+            const text = contentDiv.textContent.normalize('NFKC');
             const matches = text.match(regex);
             if (matches) {
                 matchCountTotal += matches.length;
@@ -94,11 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const spans = contentDiv.getElementsByClassName('highlight');
                 highlightedSpans.push(...spans);
             } else {
-                contentDiv.innerHTML = text;
+                contentDiv.innerHTML = escapeHtml(text);
             }
         });
 
-        matchCount.textContent = `${matchCountTotal} match${matchCountTotal !== 1 ? 'es' : ''}`;
+        matchCount.textContent = `${matchCountTotal} تطابق${matchCountTotal !== 1 ? 'ات' : ''}`;
         prevMatch.disabled = highlightedSpans.length === 0;
         nextMatch.disabled = highlightedSpans.length === 0;
         currentHighlightIndex = -1;
@@ -111,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Clear previous highlights
     function clearHighlights() {
         Array.from(chatContainer.getElementsByClassName('message-content')).forEach(contentDiv => {
-            contentDiv.innerHTML = contentDiv.textContent;
+            contentDiv.innerHTML = escapeHtml(contentDiv.textContent);
         });
         highlightedSpans = [];
     }
