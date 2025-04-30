@@ -5,10 +5,11 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Noto Sans Arabic', Arial, sans-serif;
     background-color: #f0f2f5;
     color: #333;
     line-height: 1.5;
+    direction: rtl;
 }
 
 .container {
@@ -35,6 +36,7 @@ body {
     border: 1px solid #ccc;
     border-radius: 4px;
     outline: none;
+    text-align: right;
 }
 
 #searchInput:focus {
@@ -87,11 +89,11 @@ button:hover:not(:disabled) {
 }
 
 .message.pinky {
-    align-items: flex-start;
+    align-items: flex-end;
 }
 
 .message.r {
-    align-items: flex-end;
+    align-items: flex-start;
 }
 
 .message-content {
@@ -99,6 +101,8 @@ button:hover:not(:disabled) {
     padding: 10px 15px;
     border-radius: 12px;
     position: relative;
+    text-align: right;
+    unicode-bidi: embed;
 }
 
 .message.pinky .message-content {
@@ -115,6 +119,7 @@ button:hover:not(:disabled) {
     font-size: 12px;
     color: #666;
     margin-top: 5px;
+    text-align: right;
 }
 
 .highlight {
@@ -150,5 +155,11 @@ button:hover:not(:disabled) {
 
     .timestamp {
         color: #aaa;
+    }
+}
+
+@media (max-width: 600px) {
+    .message-content {
+        max-width: 85%;
     }
 }
